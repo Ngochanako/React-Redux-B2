@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import { useDispatch,useSelector } from 'react-redux';
@@ -23,6 +23,12 @@ type Book={
 export default function ModalAdd({handleCancel,typeSubmit}:Props) {
     const book=useSelector((state:State)=>state.bookReducer.book);
     const dispatch=useDispatch();
+    //valide start-date
+    const [minDate,setMinDate]=useState<string>('')
+    useEffect(()=>{
+      let today=new Date().toISOString().split('T')[0];
+      setMinDate(today);
+    })
     const handleChange=(e:React.ChangeEvent<HTMLInputElement>)=>{
         const {name,value}=e.target;   
         const newBook={...book,[name]:value}   
@@ -63,11 +69,11 @@ export default function ModalAdd({handleCancel,typeSubmit}:Props) {
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Label>Ngày mượn</Form.Label>
-        <Form.Control onChange={handleChange} name='date_start' type="date" placeholder="Enter date-borrow" value={book.date_start} />
+        <Form.Control onChange={handleChange} min={minDate} name='date_start' type="date" placeholder="Enter date-borrow" value={book.date_start} />
       </Form.Group>
       <Form.Group className="mb-3" controlId="formBasicCheckbox">
         <Form.Label>Ngày trả</Form.Label>
-        <Form.Control onChange={handleChange} name='date_end' type="date" placeholder="Enter date-return" value={book.date_end}/>
+        <Form.Control onChange={handleChange} min={book.date_start} name='date_end' type="date" placeholder="Enter date-return" value={book.date_end}/>
       </Form.Group>
       <Button onClick={handleSubmit} variant="primary" type="submit">
         Submit
